@@ -22,6 +22,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.hibernate.orm:hibernate-community-dialects")
+    runtimeOnly("com.oracle.database.jdbc:ojdbc11")
     runtimeOnly("org.xerial:sqlite-jdbc:3.47.2.0")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

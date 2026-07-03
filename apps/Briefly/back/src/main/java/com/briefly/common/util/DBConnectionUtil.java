@@ -26,9 +26,17 @@ public final class DBConnectionUtil {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
-                PROPS.getProperty("db.url"),
-                PROPS.getProperty("db.username"),
-                PROPS.getProperty("db.password")
+                resolve("db.url", "DB_URL"),
+                resolve("db.username", "DB_USERNAME"),
+                resolve("db.password", "DB_PASSWORD")
         );
+    }
+
+    private static String resolve(String propertyKey, String envKey) {
+        String envValue = System.getenv(envKey);
+        if (envValue != null && !envValue.isBlank()) {
+            return envValue;
+        }
+        return PROPS.getProperty(propertyKey);
     }
 }

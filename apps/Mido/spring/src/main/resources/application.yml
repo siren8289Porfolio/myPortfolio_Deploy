@@ -1,28 +1,30 @@
+server:
+  port: 8080
+  servlet:
+    context-path: ${SERVER_SERVLET_CONTEXT_PATH:}
+  error:
+    include-message: always
+    include-binding-errors: always
+
 spring:
   application:
     name: backend
   datasource:
-    url: jdbc:postgresql://localhost:5432/mido
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:oracle.jdbc.OracleDriver}
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.OracleDialect
         format_sql: true
     show-sql: true
   devtools:
     livereload:
       enabled: true
-
-server:
-  port: 8080
-  error:
-    include-message: always
-    include-binding-errors: always
 
 logging:
   level:
