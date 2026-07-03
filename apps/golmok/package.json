@@ -1,0 +1,24 @@
+{
+  "name": "dasi-golmok",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["front"],
+  "scripts": {
+    "dev": "concurrently -n front,back -c cyan,magenta \"npm run dev:front\" \"npm run dev:back\"",
+    "dev:front": "npm run dev -w front",
+    "dev:back": "cd back && ./gradlew bootRun",
+    "build": "cd back && ./gradlew bootJar -x test && npm run build -w front",
+    "start": "concurrently -n front,back -c cyan,magenta \"npm run start -w front\" \"cd back && java -jar build/libs/dasi-golmok-api.jar\"",
+    "lint": "npm run lint -w front",
+    "db:up": "bash back/scripts/db-up.sh",
+    "db:down": "bash back/scripts/db-down.sh",
+    "db:reset": "cd back && docker compose down -v && docker compose up -d",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "deploy": "bash scripts/deploy.sh",
+    "health-check": "bash scripts/health-check.sh"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

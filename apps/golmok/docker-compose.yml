@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: dasi-golmok-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-app_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-app_password}
+      POSTGRES_DB: ${DB_NAME:-dasi_golmok}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-app_user} -d ${DB_NAME:-dasi_golmok}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    image: dasi-golmok-back:v0.1.0
+    container_name: dasi-golmok-back
+    restart: unless-stopped
+    ports:
+      - "${BACK_PORT:-8080}:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/${DB_NAME:-dasi_golmok}
+      DB_USERNAME: ${DB_USERNAME:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-app_password}
+      JWT_SECRET: ${JWT_SECRET:-dasi-golmok-dev-secret-change-in-production-min-32-chars}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+      APP_VERSION: ${APP_VERSION:-0.1.0}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+      args:
+        BACKEND_URL: http://back:8080
+    image: dasi-golmok-front:v0.1.0
+    container_name: dasi-golmok-front
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      BACKEND_URL: http://back:8080
+      NODE_ENV: production
+    depends_on:
+      - back
+
+volumes:
+  postgres_data:
+  uploads_data:

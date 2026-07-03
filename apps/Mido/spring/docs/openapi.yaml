@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: MIDO Verification API
+  version: 1.0.0
+  description: >
+    Verification workflow backend for MIDO.
+    Provides manual input, file upload, and work context summary APIs.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development
+
+paths:
+  /api/verifications/manual:
+    post:
+      summary: Create verification data from manual input
+      operationId: createManualVerification
+      tags:
+        - Verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManualInputRequest'
+      responses:
+        '200':
+          description: Verification created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+
+  /api/verifications/{id}/upload:
+    post:
+      summary: Upload a file and attach it to existing verification
+      operationId: uploadVerificationFile
+      tags:
+        - Verification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: VerificationData ID
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Text-based source code file to upload
+      responses:
+        '200':
+          description: File uploaded and code field updated
+
+  /api/verifications/{id}/context:
+    get:
+      summary: Get summarized work context for a verification
+      operationId: getVerificationContext
+      tags:
+        - Verification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: VerificationData ID
+      responses:
+        '200':
+          description: Work context summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkContextResponse'
+
+components:
+  schemas:
+    ManualInputRequest:
+      type: object
+      properties:
+        inputType:
+          type: string
+          description: Input type (PASTE, FILE, COMMIT, PR)
+          example: PASTE
+        inputMethod:
+          type: string
+          description: More specific input method (e.g., TEXTAREA, FILE_UPLOAD)
+          example: TEXTAREA
+        repoUrl:
+          type: string
+          nullable: true
+          description: Repository URL when using COMMIT or PR mode
+          example: https://github.com/siren8289/MIDO
+        commitHash:
+          type: string
+          nullable: true
+          description: Commit hash when using COMMIT mode
+          example: 0123456789abcdef
+        prNumber:
+          type: integer
+          nullable: true
+          description: Pull request number when using PR mode
+          example: 12
+        rawInput:
+          type: string
+          nullable: true
+          description: Raw input text from the manual input step
+        code:
+          type: string
+          nullable: true
+          description: Parsed/normalized code content used for verification
+      required:
+        - inputType
+        - inputMethod
+
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+      required:
+        - id
+
+    WorkContextResponse:
+      type: object
+      properties:
+        repoUrl:
+          type: string
+          nullable: true
+          description: Repository URL to display in summary
+        commitHash:
+          type: string
+          nullable: true
+          description: Commit hash to display in summary
+        prNumber:
+          type: integer
+          nullable: true
+          description: PR number to display in summary

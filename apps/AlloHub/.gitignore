@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# next.js
+.next/
+out/
+
+# env
+.env*
+
+# sqlite (back/)
+back/data/
+back/build/
+back/.gradle/
+
+# generated prisma
+back/src/generated/prisma
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+coverage/
+*.tsbuildinfo
+next-env.d.ts

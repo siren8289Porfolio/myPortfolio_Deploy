@@ -1,0 +1,31 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Next.js
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# Env (injected at runtime)
+.env
+.env*.local
+
+# Dev
+*.md
+!README.md
+.cursor
+.vscode
+
+# Test / CI artifacts
+coverage
+
+# SQLite legacy
+prisma/*.db
+prisma/*.db-journal
+
+# OS
+.DS_Store

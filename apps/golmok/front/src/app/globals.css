@@ -1,0 +1,144 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #f5f0e8;
+  --color-cream-dark: #e8dfd0;
+  --color-sepia: #8b7355;
+  --color-sepia-dark: #5c4a32;
+  --color-rust: #c45c3e;
+  --color-rust-light: #e07a5f;
+  --color-forest: #3d5a45;
+  --color-ink: #2c2416;
+  --color-film: #1a1612;
+  --font-serif: "Noto Serif KR", serif;
+  --font-sans: "Pretendard", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  min-height: 100vh;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.film-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+.vintage-card {
+  background: linear-gradient(145deg, #faf6ef 0%, #f0e8d8 100%);
+  border: 1px solid rgba(139, 115, 85, 0.2);
+  box-shadow:
+    0 4px 20px rgba(44, 36, 22, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.vintage-card:hover {
+  box-shadow:
+    0 8px 30px rgba(44, 36, 22, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-rust) 0%, var(--color-rust-light) 100%);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(196, 92, 62, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-sepia-dark);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: 1.5px solid var(--color-sepia);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: var(--color-cream-dark);
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgba(139, 115, 85, 0.3);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-rust);
+  box-shadow: 0 0 0 3px rgba(196, 92, 62, 0.1);
+}
+
+.tag-pill {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(139, 115, 85, 0.12);
+  color: var(--color-sepia-dark);
+}
+
+.leaflet-container {
+  border-radius: 0.75rem;
+  z-index: 0;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+}

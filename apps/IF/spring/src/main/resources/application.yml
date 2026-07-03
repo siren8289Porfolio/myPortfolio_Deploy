@@ -1,0 +1,41 @@
+# 스키마는 spring/db/ 에서 관리. ddl-auto=validate 로 엔티티↔DB 일치만 검증한다.
+# 최초 생성: cd spring && ./db/init-db.sh && ./db/apply-schema.sh --seed
+# FastAPI(위험도/설명) 주소. ai 서버: cd ai && uvicorn src.app.main:app --port 8000
+app:
+  ai:
+    base-url: http://localhost:8000
+server:
+  address: 0.0.0.0  # 실기기에서 맥 IP로 접속 가능하도록
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/if_spring
+    username: if_user
+    password: change-me
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.sql: debug
+
