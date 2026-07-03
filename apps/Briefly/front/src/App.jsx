@@ -5,7 +5,7 @@ import './App.css'
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/briefly">
       <div className="app">
         <header className="header">
           <Link to="/" className="logo">Briefly</Link>
