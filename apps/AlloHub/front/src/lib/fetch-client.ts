@@ -27,6 +27,17 @@ export function clearAuthToken() {
   sessionStorage.removeItem(ROLE_KEY);
 }
 
+// 정적 export로 빌드되어 /allohub 하위 경로에 서빙되므로, 상대경로 API 호출("/api/...")에
+// 배포 base path를 자동으로 붙여준다. 로컬 개발(next dev)에서는 비워둬 기존 rewrite가 동작한다.
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+function withBasePath(input: RequestInfo): RequestInfo {
+  if (typeof input === "string" && input.startsWith("/")) {
+    return `${BASE_PATH}${input}`;
+  }
+  return input;
+}
+
 export async function apiFetch(
   input: RequestInfo,
   init?: RequestInit,
@@ -41,8 +52,10 @@ export async function apiFetch(
     headers.set("Content-Type", "application/json");
   }
 
-  return fetch(input, { ...init, headers });
+  return fetch(withBasePath(input), { ...init, headers });
 }
+
+export { BASE_PATH, withBasePath };
 
 export type ApiSuccess<T> = {
   success: true;

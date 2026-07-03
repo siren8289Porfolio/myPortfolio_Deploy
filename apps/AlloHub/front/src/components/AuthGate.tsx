@@ -6,6 +6,7 @@ import {
   getAuthToken,
   setAuthSession,
   clearAuthToken,
+  withBasePath,
 } from "@/lib/fetch-client";
 
 const PRESETS = [
@@ -29,7 +30,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     e.preventDefault();
     setError("");
 
-    const res = await fetch("/api/reconciliation", {
+    const res = await fetch(withBasePath("/api/reconciliation"), {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -38,7 +39,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const sessionRes = await fetch("/api/auth/session", {
+    const sessionRes = await fetch(withBasePath("/api/auth/session"), {
       headers: { Authorization: `Bearer ${token}` },
     });
     const sessionBody = await sessionRes.json();

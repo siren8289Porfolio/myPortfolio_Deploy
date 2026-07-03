@@ -39,6 +39,8 @@ services:
         condition: service_healthy
       briefly-web:
         condition: service_healthy
+      allohub-web:
+        condition: service_healthy
     networks:
       - portfolio-network
     restart: unless-stopped
@@ -98,6 +100,16 @@ services:
       - portfolio-network
     restart: unless-stopped
     healthcheck: *app-healthcheck
+
+  allohub-web:
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-allohub-web:${GHCR_IMAGE_TAG:-latest}
+    container_name: allohub-web
+    expose:
+      - "80"
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+    healthcheck: *web-healthcheck
 
   if-app:
     image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-if:${GHCR_IMAGE_TAG:-latest}

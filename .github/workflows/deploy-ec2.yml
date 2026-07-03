@@ -33,6 +33,8 @@ jobs:
             context: apps/pivotSeoul
           - image: portfolio-allohub
             context: apps/AlloHub
+          - image: portfolio-allohub-web
+            context: apps/AlloHub/front
           - image: portfolio-if
             context: apps/IF
           - image: portfolio-golmok
