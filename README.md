@@ -6,16 +6,29 @@ AWS EC2 기반 실무형 배포를 목표로 하는 포트폴리오 모노레포
 ## 아키텍처
 
 ```
-Mac (Local)
-  → Docker Desktop
-  → docker-compose.yml + docker-compose.local.yml (로컬 build)
-  → Nginx + Spring Boot × 7
-  → GitHub Push
-  → GitHub Actions (Build & Push)
-  → GHCR
-  → AWS EC2 (pull only, no build)
-  → HTTPS → CloudWatch → k3s → EKS
+Local (Mac)
+    ↓ Docker Compose + local build
+    ↓
+GitHub (git push main)
+    ↓
+GitHub Actions — Build & Push (7 images)
+    ↓
+GHCR (ghcr.io/<actor>/portfolio-*)
+    ↓
+AWS EC2 — docker compose pull / up -d (no build)
+    ↓
+Docker Compose
+    ↓
+Nginx (:80) — / → Portfolio Home · /mido … → Reverse Proxy
+    ↓
+Spring Boot × 7 (+ Briefly Tomcat)
 ```
+
+| URL | 설명 |
+|-----|------|
+| `http://<host>/` | Portfolio 메인 (정적 `index.html`) |
+| `http://<host>/mido` … | 각 프로젝트 Reverse Proxy |
+| `http://<host>/health` | Nginx 헬스체크 `200 ok` |
 
 ## 구조
 
@@ -45,6 +58,8 @@ cp .env.example .env   # 최초 1회
 | Golmok | http://localhost/golmok |
 | Briefly | http://localhost/briefly |
 
+메인: `http://localhost/` (Portfolio Home)
+
 헬스체크: `http://localhost/health`
 
 ```bash
@@ -67,19 +82,19 @@ cp .env.example .env   # 최초 1회
 ## Phase 4 — CI/CD (GitHub Actions + GHCR)
 
 ```
-Git Push (main)
-  → GitHub Actions — Build & Push (7 images)
-  → GHCR (ghcr.io/<owner>/portfolio-*)
-  → SSH → EC2 → deploy.sh (pull / up -d, no build)
-  → Nginx → Spring Boot × 7
+Local → GitHub → GitHub Actions → GHCR → EC2 → Docker Compose → Nginx → Spring Boot × 7
 ```
+
+- Actions: `docker/login-action` + `docker/build-push-action` → `ghcr.io/${{ github.actor }}/portfolio-*`
+- EC2: `deploy.sh` — `git pull` → `compose pull` → `up -d` (build 없음)
+- 루트 `/` : Portfolio Home (`deploy/nginx/index.html`)
 
 ### Secrets (GitHub Repository Settings)
 
 | Secret | 설명 |
 |--------|------|
-| `GHCR_USERNAME` | GitHub 사용자명 |
-| `GHCR_TOKEN` | PAT (`write:packages`, `read:packages`) |
+| `GHCR_USERNAME` | GitHub 사용자명 (EC2 pull 로그인) |
+| `GHCR_TOKEN` | PAT (`read:packages`) — EC2 pull 전용 |
 | `EC2_HOST` | Public IP |
 | `EC2_USER` | `ubuntu` |
 | `EC2_SSH_KEY` | PEM private key 전체 |

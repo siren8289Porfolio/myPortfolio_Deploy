@@ -7,6 +7,7 @@ services:
       - "${NGINX_HTTP_PORT:-80}:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/index.html:/usr/share/nginx/html/index.html:ro
     depends_on:
       - mido-app
       - legacy-app
@@ -20,7 +21,7 @@ services:
     restart: unless-stopped
 
   mido-app:
-    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-mido:${GHCR_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-mido:${GHCR_IMAGE_TAG:-latest}
     container_name: mido-app
     expose:
       - "8080"
@@ -33,7 +34,7 @@ services:
     restart: unless-stopped
 
   legacy-app:
-    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-legacy:${GHCR_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-legacy:${GHCR_IMAGE_TAG:-latest}
     container_name: legacy-app
     expose:
       - "8080"
@@ -46,7 +47,7 @@ services:
     restart: unless-stopped
 
   pivot-app:
-    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-pivot:${GHCR_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-pivot:${GHCR_IMAGE_TAG:-latest}
     container_name: pivot-app
     expose:
       - "8080"
@@ -59,7 +60,7 @@ services:
     restart: unless-stopped
 
   allohub-app:
-    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-allohub:${GHCR_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-allohub:${GHCR_IMAGE_TAG:-latest}
     container_name: allohub-app
     expose:
       - "8080"
@@ -72,7 +73,7 @@ services:
     restart: unless-stopped
 
   if-app:
-    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-if:${GHCR_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-if:${GHCR_IMAGE_TAG:-latest}
     container_name: if-app
     expose:
       - "8080"
@@ -85,7 +86,7 @@ services:
     restart: unless-stopped
 
   golmok-app:
-    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-golmok:${GHCR_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-golmok:${GHCR_IMAGE_TAG:-latest}
     container_name: golmok-app
     expose:
       - "8080"
@@ -98,7 +99,7 @@ services:
     restart: unless-stopped
 
   briefly-app:
-    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-briefly:${GHCR_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-briefly:${GHCR_IMAGE_TAG:-latest}
     container_name: briefly-app
     expose:
       - "8080"
