@@ -164,11 +164,48 @@ cd deploy
 
 ---
 
+## Spring Profile (local / prod)
+
+각 Spring Boot 앱은 프로파일로 DB를 분리합니다.
+
+| Profile | DB | 용도 |
+|---------|-----|------|
+| `local` | H2 / SQLite (in-memory) | Mac Docker Compose |
+| `prod` | PostgreSQL (RDS) | AWS EC2 |
+
+```
+application.yml        # 공통 설정 (server, actuator 등)
+application-local.yml  # local profile — H2/SQLite
+application-prod.yml   # prod profile — PostgreSQL (env 변수)
+```
+
+로컬:
+
+```env
+SPRING_PROFILE=local
+```
+
+EC2 / RDS:
+
+```env
+SPRING_PROFILE=prod
+SPRING_DATASOURCE_URL=jdbc:postgresql://your-rds:5432/dbname
+SPRING_DATASOURCE_USERNAME=...
+SPRING_DATASOURCE_PASSWORD=...
+```
+
+Briefly(Tomcat)는 `db.properties`(local) + 환경변수 `DB_URL`(prod)로 동일하게 분리합니다.
+
+---
+
 ## 환경변수 (`deploy/.env`)
 
 | 변수 | 설명 |
 |------|------|
-| `SPRING_PROFILE` | Spring profile (`local`, `prod`) |
+| `SPRING_PROFILE` | `local` (H2/SQLite) 또는 `prod` (PostgreSQL/RDS) |
+| `SPRING_DATASOURCE_URL` | prod 전용 — RDS JDBC URL |
+| `SPRING_DATASOURCE_USERNAME` | prod 전용 |
+| `SPRING_DATASOURCE_PASSWORD` | prod 전용 |
 | `TZ` | 타임존 |
 | `NGINX_HTTP_PORT` | Nginx 호스트 포트 (기본 80) |
 | `EC2_PUBLIC_IP` | EC2 공인 IP |

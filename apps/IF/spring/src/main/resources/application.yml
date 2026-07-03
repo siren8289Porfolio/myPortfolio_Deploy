@@ -1,6 +1,6 @@
 app:
   ai:
-    base-url: http://localhost:8000
+    base-url: ${APP_AI_BASE_URL:http://localhost:8000}
 
 server:
   port: 8080
@@ -9,17 +9,7 @@ server:
     context-path: ${SERVER_SERVLET_CONTEXT_PATH:}
 
 spring:
-  datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:oracle.jdbc.OracleDriver}
   jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.OracleDialect
     open-in-view: false
 
 management:
@@ -37,7 +27,3 @@ management:
       enabled: true
     readinessstate:
       enabled: true
-
-logging:
-  level:
-    org.springframework.sql: debug

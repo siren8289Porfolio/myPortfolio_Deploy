@@ -8,18 +8,8 @@ spring:
     name: pivotseoul-back
   flyway:
     enabled: false
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:oracle:thin:@localhost:1521/FREEPDB1}
-    username: ${SPRING_DATASOURCE_USERNAME:SYSTEM}
-    password: ${SPRING_DATASOURCE_PASSWORD:Oracle1234}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:oracle.jdbc.OracleDriver}
   jpa:
-    hibernate:
-      ddl-auto: update
     open-in-view: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.OracleDialect
 
 springdoc:
   swagger-ui:

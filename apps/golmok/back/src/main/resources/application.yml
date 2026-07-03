@@ -6,22 +6,6 @@ server:
 spring:
   application:
     name: dasi-golmok-api
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:${DATABASE_URL:jdbc:oracle:thin:@localhost:1521/FREEPDB1}}
-    username: ${SPRING_DATASOURCE_USERNAME:${DB_USERNAME:SYSTEM}}
-    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD:Oracle1234}}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:oracle.jdbc.OracleDriver}
-  jpa:
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.OracleDialect
-        format_sql: true
-        default_batch_fetch_size: 20
-  flyway:
-    enabled: false
   servlet:
     multipart:
       max-file-size: 5MB

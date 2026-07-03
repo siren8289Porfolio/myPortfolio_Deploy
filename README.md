@@ -68,5 +68,5 @@ cp .env.example .env   # 최초 1회
 
 - **Reverse Proxy:** Nginx
 - **Backend:** Spring Boot (Java 17/21), Briefly(Tomcat WAR)
-- **DB:** 컨테이너 없음 — 앱 내장 DB / AWS RDS 등 Phase 5+ 에서 연결
+- **DB:** `local` profile → H2/SQLite · `prod` profile → PostgreSQL (RDS)
 - **배포:** Docker Compose (로컬·EC2 동일)

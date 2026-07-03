@@ -15,9 +15,21 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    show-sql: true
+
+  devtools:
+    livereload:
+      enabled: true
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info
+
+logging:
+  level:
+    com.mido.verification: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG

@@ -48,9 +48,9 @@ Mac (Local)
 
 ## DB 전략
 
-- **로컬 / EC2 Compose:** DB 컨테이너 없음
-- 각 앱은 `local` profile에서 H2 / SQLite 등 내장 DB 사용
-- **운영:** AWS RDS (PostgreSQL 등) — Phase 5+ 에서 `SPRING_DATASOURCE_*` 환경변수로 연결
+- **local profile:** H2 / SQLite in-memory — Docker Compose 로컬 실행
+- **prod profile:** PostgreSQL — AWS RDS (`SPRING_DATASOURCE_*` 환경변수)
+- **Briefly:** `db.properties`(local) + `DB_URL` 환경변수(prod)
 
 ## 디렉터리 책임
 

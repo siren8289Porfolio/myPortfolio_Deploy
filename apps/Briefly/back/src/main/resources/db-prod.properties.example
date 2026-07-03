@@ -1,0 +1,5 @@
+# Production — set via EC2 environment variables (overrides db.properties)
+# DB_URL=jdbc:postgresql://your-rds-endpoint:5432/briefly
+# DB_USERNAME=
+# DB_PASSWORD=
+db.driver=org.postgresql.Driver
