@@ -33,8 +33,26 @@ docker compose pull
 echo ">>> [4/5] Restart containers"
 docker compose up -d --remove-orphans
 
+# nginx는 default.conf를 단일 파일로 bind mount한다. git reset --hard가
+# 이 파일을 치환(inode 변경)해도 nginx 컨테이너가 재생성되지 않으면
+# 예전 inode를 계속 참조해 최신 설정이 반영되지 않는다(stale bind mount).
+# 매 배포마다 nginx를 강제로 재생성해 항상 최신 설정을 물게 한다.
+echo ">>> [4b/5] Force-recreate nginx to avoid stale config bind mount"
+docker compose up -d --force-recreate nginx
+
 echo ">>> [5/5] Cleanup images"
 docker image prune -f
+
+echo ">>> Health check"
+sleep 5
+for app in mido legacy pivot allohub if golmok briefly; do
+  code=$(docker exec portfolio-nginx curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1/${app}/" || echo "000")
+  if [[ "$code" == "200" ]]; then
+    echo "  ✓ ${app} OK (${code})"
+  else
+    echo "  ✗ ${app} FAIL (${code})"
+  fi
+done
 
 echo ">>> deploy complete"
 docker ps
