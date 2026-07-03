@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
-# EC2 표준 배포 스크립트 (GitHub Actions / 수동 배포 공용)
+# EC2 표준 배포 스크립트 — GHCR pull only (no build on EC2)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DEPLOY_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 PROJECT_DIR="${PROJECT_DIR:-$HOME/my-portfolio}"
 
-echo ">>> [1/4] git pull"
+echo ">>> [1/4] git pull (compose / nginx 설정 동기화)"
 cd "${PROJECT_DIR}"
 git pull --ff-only
 
-echo ">>> [2/4] docker compose build"
 cd "${DEPLOY_DIR}"
 if [[ -f .env ]]; then
   # shellcheck disable=SC1091
@@ -19,19 +18,18 @@ if [[ -f .env ]]; then
   set +a
 fi
 
-export DOCKER_BUILDKIT=1
+echo ">>> [2/4] GHCR login"
+if [[ -z "${GHCR_TOKEN:-}" ]]; then
+  echo "ERROR: GHCR_TOKEN is required for docker compose pull"
+  exit 1
+fi
+echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME:?GHCR_USERNAME required}" --password-stdin
 
-# 소형 EC2(t3.micro 등) OOM 방지: 앱 서비스별 순차 빌드
-SERVICES=(mido-app legacy-app pivot-app allohub-app if-app golmok-app briefly-app)
-for svc in "${SERVICES[@]}"; do
-  echo "  building ${svc}..."
-  docker compose build "${svc}"
-done
+echo ">>> [3/4] docker compose pull"
+docker compose pull
 
-echo ">>> [3/4] docker compose up -d"
+echo ">>> [4/4] docker compose up -d"
 docker compose up -d --remove-orphans
-
-echo ">>> [4/4] docker image prune -f"
 docker image prune -f
 
 echo ">>> deploy complete"

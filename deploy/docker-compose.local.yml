@@ -1,0 +1,16 @@
+# Local Mac only — build from source (Phase 1). EC2 / CI does not use this file.
+services:
+  mido-app:
+    build: ../apps/Mido
+  legacy-app:
+    build: ../apps/LegacyPoc
+  pivot-app:
+    build: ../apps/pivotSeoul
+  allohub-app:
+    build: ../apps/AlloHub
+  if-app:
+    build: ../apps/IF
+  golmok-app:
+    build: ../apps/golmok
+  briefly-app:
+    build: ../apps/Briefly

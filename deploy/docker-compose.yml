@@ -1,3 +1,4 @@
+# Production / EC2 — GHCR pre-built images (no build on EC2)
 services:
   nginx:
     image: nginx:latest
@@ -19,7 +20,7 @@ services:
     restart: unless-stopped
 
   mido-app:
-    build: ../apps/Mido
+    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-mido:${GHCR_IMAGE_TAG:-latest}
     container_name: mido-app
     expose:
       - "8080"
@@ -32,7 +33,7 @@ services:
     restart: unless-stopped
 
   legacy-app:
-    build: ../apps/LegacyPoc
+    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-legacy:${GHCR_IMAGE_TAG:-latest}
     container_name: legacy-app
     expose:
       - "8080"
@@ -45,7 +46,7 @@ services:
     restart: unless-stopped
 
   pivot-app:
-    build: ../apps/pivotSeoul
+    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-pivot:${GHCR_IMAGE_TAG:-latest}
     container_name: pivot-app
     expose:
       - "8080"
@@ -58,7 +59,7 @@ services:
     restart: unless-stopped
 
   allohub-app:
-    build: ../apps/AlloHub
+    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-allohub:${GHCR_IMAGE_TAG:-latest}
     container_name: allohub-app
     expose:
       - "8080"
@@ -71,7 +72,7 @@ services:
     restart: unless-stopped
 
   if-app:
-    build: ../apps/IF
+    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-if:${GHCR_IMAGE_TAG:-latest}
     container_name: if-app
     expose:
       - "8080"
@@ -84,7 +85,7 @@ services:
     restart: unless-stopped
 
   golmok-app:
-    build: ../apps/golmok
+    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-golmok:${GHCR_IMAGE_TAG:-latest}
     container_name: golmok-app
     expose:
       - "8080"
@@ -97,7 +98,7 @@ services:
     restart: unless-stopped
 
   briefly-app:
-    build: ../apps/Briefly
+    image: ghcr.io/${GHCR_OWNER:-siren8289porfolio}/portfolio-briefly:${GHCR_IMAGE_TAG:-latest}
     container_name: briefly-app
     expose:
       - "8080"

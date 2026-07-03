@@ -8,11 +8,13 @@ AWS EC2 기반 실무형 배포를 목표로 하는 포트폴리오 모노레포
 ```
 Mac (Local)
   → Docker Desktop
-  → Docker Compose
+  → docker-compose.yml + docker-compose.local.yml (로컬 build)
   → Nginx + Spring Boot × 7
-  → GitHub
-  → AWS EC2 (동일 Compose 스택)
-  → GitHub Actions → HTTPS → CloudWatch → k3s → EKS
+  → GitHub Push
+  → GitHub Actions (Build & Push)
+  → GHCR
+  → AWS EC2 (pull only, no build)
+  → HTTPS → CloudWatch → k3s → EKS
 ```
 
 ## 구조
@@ -57,37 +59,39 @@ cp .env.example .env   # 최초 1회
 | 1 | Docker Desktop, Compose, Nginx, Spring Boot, localhost |
 | 2 | AWS EC2, Ubuntu, Docker, Git, Compose |
 | 3 | EC2 Docker Compose 배포, Public IP 접속 |
-| 4 | **GitHub Actions 자동 배포** (`main` push → EC2 `deploy.sh`) |
+| 4 | **GitHub Actions + GHCR** (`main` push → Build → GHCR → EC2 pull) |
 | 5 | Elastic IP, Route53, HTTPS |
 | 6 | CloudWatch |
 | 7 | k3s → Amazon EKS |
 
-## Phase 4 — CI/CD (GitHub Actions)
+## Phase 4 — CI/CD (GitHub Actions + GHCR)
 
 ```
 Git Push (main)
-  → GitHub Actions
-  → SSH → EC2
-  → deploy/scripts/deploy.sh
-  → Docker Compose → Nginx → Spring Boot × 7
+  → GitHub Actions — Build & Push (7 images)
+  → GHCR (ghcr.io/<owner>/portfolio-*)
+  → SSH → EC2 → deploy.sh (pull / up -d, no build)
+  → Nginx → Spring Boot × 7
 ```
 
 ### Secrets (GitHub Repository Settings)
 
 | Secret | 설명 |
 |--------|------|
-| `EC2_HOST` | Public IP 또는 Elastic IP |
+| `GHCR_USERNAME` | GitHub 사용자명 |
+| `GHCR_TOKEN` | PAT (`write:packages`, `read:packages`) |
+| `EC2_HOST` | Public IP |
 | `EC2_USER` | `ubuntu` |
 | `EC2_SSH_KEY` | PEM private key 전체 |
-| `EC2_PORT` | (선택) SSH 포트, 기본 `22` |
+| `EC2_PORT` | (선택) `22` |
 
 ```bash
 git push origin main   # Actions 자동 실행
 ```
 
-Actions 로그: GitHub → **Actions → Deploy to EC2**
+로컬 개발은 `./scripts/start.sh` (`docker-compose.local.yml`로 build).
 
-상세: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+상세: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 ## 스택
 

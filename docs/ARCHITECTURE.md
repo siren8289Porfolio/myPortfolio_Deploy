@@ -3,17 +3,48 @@
 ## 목표 스택
 
 ```
-Mac (Local)
-    ↓ Docker Desktop
-    ↓ Docker Compose
-    ↓ Nginx + Spring Boot × 7
-    ↓ GitHub
-    ↓ AWS EC2 (동일 Compose)
-    ↓ GitHub Actions
-    ↓ HTTPS (Route53 + ACM/Certbot)
-    ↓ CloudWatch
-    ↓ k3s → Amazon EKS
+Developer
+    ↓ Git Push (main)
+    ↓ GitHub Actions — Build & Push (7 images)
+    ↓ GitHub Container Registry (GHCR)
+    ↓ AWS EC2 — docker compose pull / up -d
+    ↓ Nginx :80
+    ↓ Spring Boot × 7 (+ Briefly Tomcat)
+    ↓ (Phase 5+) HTTPS, CloudWatch, k3s → EKS
 ```
+
+## CI/CD 배포 흐름 (Phase 4+)
+
+```
+┌─────────────┐     ┌──────────────────┐     ┌─────────────┐
+│ Git Push    │────▶│ GitHub Actions   │────▶│ GHCR        │
+│ main        │     │ build-push-action│     │ ghcr.io/... │
+└─────────────┘     └────────┬─────────┘     └──────┬──────┘
+                             │ SSH                 │ pull
+                             ▼                     ▼
+                      ┌──────────────────────────────────┐
+                      │ EC2 — deploy/scripts/deploy.sh   │
+                      │  git pull → GHCR login → pull    │
+                      │  → compose up -d (no build)      │
+                      └──────────────────────────────────┘
+```
+
+- **EC2에서는 Docker build를 수행하지 않음** — 이미지는 Actions runner에서 빌드
+- 로컬 Mac(Phase 1)은 `docker-compose.local.yml`로 소스 빌드 유지
+
+## GHCR 이미지
+
+| 서비스 | 이미지 |
+|--------|--------|
+| mido-app | `ghcr.io/<owner>/portfolio-mido:latest` |
+| legacy-app | `ghcr.io/<owner>/portfolio-legacy:latest` |
+| pivot-app | `ghcr.io/<owner>/portfolio-pivot:latest` |
+| allohub-app | `ghcr.io/<owner>/portfolio-allohub:latest` |
+| if-app | `ghcr.io/<owner>/portfolio-if:latest` |
+| golmok-app | `ghcr.io/<owner>/portfolio-golmok:latest` |
+| briefly-app | `ghcr.io/<owner>/portfolio-briefly:latest` |
+
+`<owner>` = GitHub 사용자/조직명 소문자 (예: `siren8289porfolio`)
 
 ## Compose 서비스 (8개)
 
@@ -56,7 +87,8 @@ Mac (Local)
 
 | 경로 | 역할 |
 |------|------|
-| `apps/` | 애플리케이션 소스만 |
+| `apps/` | 애플리케이션 소스 + Dockerfile |
 | `deploy/` | Compose, Nginx, scripts, .env |
+| `.github/workflows/` | CI/CD (GHCR build + EC2 deploy) |
 | `docs/` | 문서 |
 | `infra/` | Terraform, Helm, EKS (미래) |

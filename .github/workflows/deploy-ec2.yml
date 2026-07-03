@@ -9,10 +9,67 @@ concurrency:
   group: deploy-ec2
   cancel-in-progress: false
 
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
 jobs:
-  deploy:
+  build-and-push:
+    name: Build & Push (${{ matrix.image }})
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: portfolio-mido
+            context: apps/Mido
+          - image: portfolio-legacy
+            context: apps/LegacyPoc
+          - image: portfolio-pivot
+            context: apps/pivotSeoul
+          - image: portfolio-allohub
+            context: apps/AlloHub
+          - image: portfolio-if
+            context: apps/IF
+          - image: portfolio-golmok
+            context: apps/golmok
+          - image: portfolio-briefly
+            context: apps/Briefly
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set GHCR owner (lowercase)
+        run: echo "GHCR_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.GHCR_OWNER }}/${{ matrix.image }}:latest
+            ${{ env.REGISTRY }}/${{ env.GHCR_OWNER }}/${{ matrix.image }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -20,13 +77,17 @@ jobs:
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
+          envs: GHCR_USERNAME,GHCR_TOKEN
           script_stop: true
-          command_timeout: 60m
+          command_timeout: 20m
           script: |
             set -euo pipefail
             bash ~/my-portfolio/deploy/scripts/deploy.sh
