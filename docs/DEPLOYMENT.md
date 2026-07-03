@@ -100,44 +100,78 @@ sudo bash deploy/scripts/server-init.sh
 
 ---
 
-## Phase 3 — EC2 배포
-
-### 수동
+## Phase 3 — EC2 수동 배포
 
 ```bash
-# EC2
-bash deploy/scripts/setup-project.sh
-cd ~/my-portfolio/deploy
-cp .env.example .env
-./scripts/deploy.sh
+cd deploy
+./scripts/ssh-connect.sh    # EC2 접속
+# EC2에서:
+bash ~/my-portfolio/deploy/scripts/deploy.sh
 ```
 
 Public IP 접속: `http://<EC2_PUBLIC_IP>/mido`
 
-### Mac에서 원격 일괄 부트스트랩
-
-```bash
-cd deploy
-./scripts/remote-bootstrap.sh
-```
+최초 1회 부트스트랩: `deploy/scripts/remote-bootstrap.sh`
 
 ---
 
-## Phase 4 — GitHub Actions (자동 배포)
+## Phase 4 — GitHub Actions (CI/CD)
 
-`.github/workflows/deploy-ec2.yml` 참고.
+### 배포 흐름
 
-흐름:
+```
+Git Push (main)
+    ↓
+GitHub Actions
+    ↓
+SSH → EC2
+    ↓
+deploy/scripts/deploy.sh
+    ↓
+git pull → docker compose build → up -d → image prune
+    ↓
+Nginx → Spring Boot × 7
+```
 
-1. `main` push
-2. SSH로 EC2 접속
-3. `git pull` + `deploy/scripts/deploy.sh`
+### GitHub Secrets 등록
 
-필요 GitHub Secrets:
+Repository → **Settings → Secrets and variables → Actions → New repository secret**
 
-- `EC2_HOST` — Public IP 또는 Elastic IP
-- `EC2_USER` — `ubuntu`
-- `EC2_SSH_KEY` — PEM private key 전체
+| Secret | 값 | 예시 |
+|--------|-----|------|
+| `EC2_HOST` | EC2 Public IP 또는 Elastic IP | `13.124.168.87` |
+| `EC2_USER` | SSH 사용자 | `ubuntu` |
+| `EC2_SSH_KEY` | PEM private key **전체 내용** | `-----BEGIN RSA PRIVATE KEY-----` … |
+| `EC2_PORT` | (선택) SSH 포트 | `22` |
+
+```bash
+# Mac에서 Secret 값 확인 예시
+cat ~/Downloads/portfolio-key.pem   # EC2_SSH_KEY에 붙여넣기
+```
+
+### 자동 배포
+
+`main` 브랜치에 `git push`하면 `.github/workflows/deploy-ec2.yml`이 실행됩니다.
+
+```bash
+git add .
+git commit -m "your message"
+git push origin main
+```
+
+Actions 탭에서 **Deploy to EC2** 워크플로 로그를 확인합니다.  
+실패 시 SSH 단계 또는 `deploy.sh` 내부 명령에서 워크플로가 중단됩니다 (`script_stop: true`).
+
+### 수동 트리거
+
+GitHub → **Actions → Deploy to EC2 → Run workflow**
+
+### EC2 사전 조건
+
+- `~/my-portfolio` git clone 완료
+- `deploy/.env` 설정 (`SPRING_PROFILE=local` 등)
+- `ubuntu` 사용자가 `docker` 그룹에 포함
+- Security Group: 22 (SSH), 80 (HTTP)
 
 ---
 

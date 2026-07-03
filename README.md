@@ -56,11 +56,36 @@ cp .env.example .env   # 최초 1회
 |-------|------|
 | 1 | Docker Desktop, Compose, Nginx, Spring Boot, localhost |
 | 2 | AWS EC2, Ubuntu, Docker, Git, Compose |
-| 3 | GitHub Clone → `docker compose up -d` → Public IP |
-| 4 | GitHub Actions 자동 배포 |
+| 3 | EC2 Docker Compose 배포, Public IP 접속 |
+| 4 | **GitHub Actions 자동 배포** (`main` push → EC2 `deploy.sh`) |
 | 5 | Elastic IP, Route53, HTTPS |
 | 6 | CloudWatch |
 | 7 | k3s → Amazon EKS |
+
+## Phase 4 — CI/CD (GitHub Actions)
+
+```
+Git Push (main)
+  → GitHub Actions
+  → SSH → EC2
+  → deploy/scripts/deploy.sh
+  → Docker Compose → Nginx → Spring Boot × 7
+```
+
+### Secrets (GitHub Repository Settings)
+
+| Secret | 설명 |
+|--------|------|
+| `EC2_HOST` | Public IP 또는 Elastic IP |
+| `EC2_USER` | `ubuntu` |
+| `EC2_SSH_KEY` | PEM private key 전체 |
+| `EC2_PORT` | (선택) SSH 포트, 기본 `22` |
+
+```bash
+git push origin main   # Actions 자동 실행
+```
+
+Actions 로그: GitHub → **Actions → Deploy to EC2**
 
 상세: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 
