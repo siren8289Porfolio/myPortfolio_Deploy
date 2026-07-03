@@ -91,4 +91,8 @@ jobs:
           command_timeout: 20m
           script: |
             set -euo pipefail
-            bash ~/my-portfolio/deploy/scripts/deploy.sh
+            cd ~/my-portfolio
+            git fetch origin
+            git reset --hard origin/main
+            git clean -fd
+            bash deploy/scripts/deploy.sh
