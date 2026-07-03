@@ -2,7 +2,9 @@ FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
-COPY gradlew gradlew.bat gradle gradle build.gradle settings.gradle ./
+COPY gradlew gradlew.bat ./
+COPY gradle ./gradle
+COPY build.gradle settings.gradle ./
 COPY back/build.gradle back/
 COPY back/src back/src
 

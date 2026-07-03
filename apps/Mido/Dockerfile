@@ -1,14 +1,16 @@
-FROM eclipse-temurin:17-jdk AS build
+FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
-COPY spring/gradlew spring/gradle spring/build.gradle.kts spring/settings.gradle.kts ./
-COPY spring/src src
+COPY spring/gradlew ./
+COPY spring/gradle ./gradle
+COPY spring/build.gradle.kts spring/settings.gradle.kts ./
+COPY spring/src ./src
 
 RUN chmod +x ./gradlew
 RUN ./gradlew clean bootJar -x test
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 

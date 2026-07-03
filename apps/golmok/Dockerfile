@@ -2,8 +2,10 @@ FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
-COPY back/gradlew back/gradle back/build.gradle.kts back/settings.gradle.kts ./
-COPY back/src src
+COPY back/gradlew ./
+COPY back/gradle ./gradle
+COPY back/build.gradle.kts back/settings.gradle.kts ./
+COPY back/src ./src
 
 RUN chmod +x ./gradlew
 RUN ./gradlew clean bootJar -x test
