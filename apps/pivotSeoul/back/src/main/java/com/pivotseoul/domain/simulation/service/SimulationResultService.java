@@ -6,6 +6,7 @@ import com.pivotseoul.domain.simulation.dto.SimulationResultResponse;
 import com.pivotseoul.domain.simulation.dto.ThresholdResultResponse;
 import com.pivotseoul.domain.simulation.repository.ScenarioResultQueryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -31,18 +32,21 @@ public class SimulationResultService {
         this.scenarioResultQueryRepository = scenarioResultQueryRepository;
     }
 
+    @Transactional(readOnly = true)
     public SimulationResultResponse getResult(Long scenarioResultId) {
         return scenarioResultQueryRepository.findBundleById(scenarioResultId)
                 .map(this::toResultResponse)
                 .orElseGet(() -> placeholderResult(scenarioResultId));
     }
 
+    @Transactional(readOnly = true)
     public ResultSummaryResponse getSummary(Long scenarioResultId) {
         return scenarioResultQueryRepository.findBundleById(scenarioResultId)
                 .map(this::toSummaryResponse)
                 .orElseGet(() -> placeholderSummary(scenarioResultId));
     }
 
+    @Transactional(readOnly = true)
     public List<ResultSummaryResponse> getHistory(Long simulationRunId) {
         if (simulationRunId == null) {
             return List.of();
