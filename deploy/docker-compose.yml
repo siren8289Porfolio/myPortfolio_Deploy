@@ -91,25 +91,14 @@ services:
     healthcheck: *app-healthcheck
 
   mido-web:
-    image: ${MIDO_WEB_IMAGE:-ghcr.io/siren8289porfolio/portfolio-mido-web:latest}
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-mido-web:${GHCR_IMAGE_TAG:-latest}
     container_name: mido-web
-    environment:
-      API_CONTEXT_PATH: /mido
-      API_URL: http://mido-app:8080
     expose:
-      - "3000"
-    depends_on:
-      mido-app:
-        condition: service_healthy
+      - "80"
     networks:
       - portfolio-network
     restart: unless-stopped
-    healthcheck:
-      interval: 15s
-      timeout: 5s
-      retries: 12
-      start_period: 20s
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/mido || exit 1"]
+    healthcheck: *web-healthcheck
 
   legacy-app:
     image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-legacy:${GHCR_IMAGE_TAG:-latest}

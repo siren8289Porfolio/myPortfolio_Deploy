@@ -27,6 +27,8 @@ jobs:
         include:
           - image: portfolio-mido
             context: apps/Mido
+          - image: portfolio-mido-web
+            context: apps/Mido/web
           - image: portfolio-legacy
             context: apps/LegacyPoc
           - image: portfolio-pivot
