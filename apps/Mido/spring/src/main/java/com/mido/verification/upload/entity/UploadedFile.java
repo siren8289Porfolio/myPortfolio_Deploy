@@ -33,7 +33,7 @@ public class UploadedFile {
     private String fileType;
 
     @Lob
-    @Column(name = "file_content")
+    @Column(name = "file_content", columnDefinition = "TEXT")
     private String fileContent;
 
     @Column(name = "uploaded_at")

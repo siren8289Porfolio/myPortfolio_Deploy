@@ -48,7 +48,7 @@ public class VerificationData {
     private VerificationStatus status = VerificationStatus.DRAFT;
 
     @Lob
-    @Column(name = "code")
+    @Column(name = "code", columnDefinition = "TEXT")
     private String code;
 
     @Column(name = "created_at")

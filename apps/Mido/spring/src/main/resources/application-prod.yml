@@ -19,6 +19,9 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+    # 기본값(1)이면 기존 EC2 DB에 baseline만 찍히고 V1이 스킵되어 status 컬럼이
+    # 추가되지 않은 채 ddl-auto=validate가 실패한다.
+    baseline-version: 0
 
 management:
   endpoints:
