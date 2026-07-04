@@ -71,7 +71,7 @@ Developer
 | `/golmok/` | `golmok-app:8080/golmok/` |
 | `/briefly/` | `briefly-app:8080/briefly/` |
 | `/health` | Nginx 직접 응답 `200 ok` |
-| `/` | Portfolio Home (`deploy/nginx/index.html`) |
+| `/` | Portfolio Home (`portfolio/index.html`) |
 
 ## 네트워크
 

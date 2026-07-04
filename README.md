@@ -87,7 +87,7 @@ Local → GitHub → GitHub Actions → GHCR → EC2 → Docker Compose → Ngin
 
 - Actions: `docker/login-action` + `docker/build-push-action` → `ghcr.io/${{ github.actor }}/portfolio-*`
 - EC2: `deploy.sh` — `git pull` → `compose pull` → `up -d` (build 없음)
-- 루트 `/` : Portfolio Home (`deploy/nginx/index.html`)
+- 루트 `/` : Portfolio Home (`portfolio/index.html`)
 
 ### Secrets (GitHub Repository Settings)
 
