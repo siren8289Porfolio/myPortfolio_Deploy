@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { apiFetch, apiFetchRaw } from "@/lib/api-client";
+import { apiFetch, apiFetchRaw, resolveAssetUrl } from "@/lib/api-client";
 
 type PendingStory = {
   id: string;
@@ -96,7 +96,7 @@ export default function AdminPage() {
             >
               <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-lg sm:h-32 sm:w-48">
                 <Image
-                  src={story.imageUrl}
+                  src={resolveAssetUrl(story.imageUrl)}
                   alt={story.title}
                   fill
                   className="object-cover"

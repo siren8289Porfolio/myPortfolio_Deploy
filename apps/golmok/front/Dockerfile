@@ -1,33 +1,17 @@
-# syntax=docker/dockerfile:1
+FROM node:20-alpine AS build
 
-FROM node:20-alpine AS base
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-FROM base AS deps
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package*.json ./
+RUN npm install
 
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
-ARG BACKEND_URL="http://back:8080"
-ENV BACKEND_URL=$BACKEND_URL
+ENV NEXT_PUBLIC_BASE_PATH=/golmok
 RUN npm run build
 
-FROM base AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+FROM nginx:alpine
 
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=build /app/out /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-USER nextjs
-EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-CMD ["node", "server.js"]
+EXPOSE 80

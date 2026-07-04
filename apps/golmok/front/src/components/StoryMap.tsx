@@ -6,6 +6,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import Image from "next/image";
+import { resolveAssetUrl } from "@/lib/api-client";
 import type { MapMarker } from "@/types";
 
 const defaultIcon = L.icon({
@@ -82,7 +83,7 @@ export function StoryMap({
             <div className="w-48">
               <div className="relative mb-2 h-24 w-full overflow-hidden rounded">
                 <Image
-                  src={marker.thumbnailUrl}
+                  src={resolveAssetUrl(marker.thumbnailUrl)}
                   alt={marker.title}
                   fill
                   className="object-cover"

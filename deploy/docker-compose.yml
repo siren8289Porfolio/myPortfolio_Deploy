@@ -35,9 +35,9 @@ services:
         condition: service_healthy
       golmok-app:
         condition: service_healthy
-      briefly-app:
+      golmok-web:
         condition: service_healthy
-      briefly-web:
+      briefly-app:
         condition: service_healthy
       allohub-web:
         condition: service_healthy
@@ -190,6 +190,16 @@ services:
     restart: unless-stopped
     healthcheck: *app-healthcheck
 
+  golmok-web:
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-golmok-web:${GHCR_IMAGE_TAG:-latest}
+    container_name: golmok-web
+    expose:
+      - "80"
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+    healthcheck: *web-healthcheck
+
   briefly-app:
     image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-briefly:${GHCR_IMAGE_TAG:-latest}
     container_name: briefly-app
@@ -201,16 +211,6 @@ services:
       - portfolio-network
     restart: unless-stopped
     healthcheck: *app-healthcheck
-
-  briefly-web:
-    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-briefly-web:${GHCR_IMAGE_TAG:-latest}
-    container_name: briefly-web
-    expose:
-      - "80"
-    networks:
-      - portfolio-network
-    restart: unless-stopped
-    healthcheck: *web-healthcheck
 
 networks:
   portfolio-network:

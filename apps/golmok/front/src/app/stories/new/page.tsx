@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { PERIOD_TAGS, CATEGORIES, SOURCE_TYPES } from "@/lib/constants";
-import { apiFetch, apiUpload } from "@/lib/api-client";
+import { apiFetch, apiUpload, resolveAssetUrl } from "@/lib/api-client";
 
 const StoryMap = dynamic(
   () => import("@/components/StoryMap").then((m) => m.StoryMap),
@@ -181,7 +181,7 @@ export default function NewStoryPage() {
               {form.imageUrl ? (
                 <div className="relative mb-2 h-48 w-full overflow-hidden rounded-lg">
                   <Image
-                    src={form.imageUrl}
+                    src={resolveAssetUrl(form.imageUrl)}
                     alt="업로드된 사진"
                     fill
                     className="object-cover"

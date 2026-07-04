@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { resolveAssetUrl } from "@/lib/api-client";
 
 type StoryCardProps = {
   id: string;
@@ -29,7 +30,7 @@ export function StoryCard({
       <article className="vintage-card overflow-hidden rounded-xl transition-all duration-300">
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
-            src={imageUrl}
+            src={resolveAssetUrl(imageUrl)}
             alt={title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"

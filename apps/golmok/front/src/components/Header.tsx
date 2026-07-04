@@ -67,7 +67,7 @@ export function Header() {
               <button
                 onClick={() => {
                   logout();
-                  window.location.href = "/";
+                  window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/`;
                 }}
                 className="btn-secondary text-sm !px-3 !py-2"
               >

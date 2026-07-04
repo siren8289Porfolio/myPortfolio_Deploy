@@ -1,14 +1,9 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { StoryCard } from "@/components/StoryCard";
-
-const API_BASE = process.env.BACKEND_URL || "http://localhost:8080";
-
-async function fetchApi<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_BASE}/api/v1${path}`, { cache: "no-store" });
-  const json = await res.json();
-  if (!json.success) return [] as T;
-  return json.data;
-}
+import { apiFetch } from "@/lib/api-client";
 
 type Region = { id: string; name: string; description?: string };
 type Story = {
@@ -23,13 +18,21 @@ type Story = {
   _count?: { reactions: number };
 };
 
-export const dynamic = "force-dynamic";
+export default function HomePage() {
+  const [regions, setRegions] = useState<Region[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function HomePage() {
-  const [regions, stories] = await Promise.all([
-    fetchApi<Region[]>("/regions"),
-    fetchApi<Story[]>("/stories/curation?sort=latest"),
-  ]);
+  useEffect(() => {
+    Promise.all([
+      apiFetch<Region[]>("/regions").catch(() => []),
+      apiFetch<Story[]>("/stories/curation?sort=latest").catch(() => []),
+    ]).then(([regionsData, storiesData]) => {
+      setRegions(regionsData);
+      setStories(storiesData);
+      setLoading(false);
+    });
+  }, []);
 
   const recentStories = stories.slice(0, 6);
 
@@ -126,7 +129,7 @@ export default async function HomePage() {
               />
             ))}
           </div>
-          {recentStories.length === 0 && (
+          {!loading && recentStories.length === 0 && (
             <p className="py-12 text-center text-sepia">
               아직 등록된 스토리가 없습니다. 첫 번째 기억을 남겨보세요!
             </p>

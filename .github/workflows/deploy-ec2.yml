@@ -43,10 +43,10 @@ jobs:
             context: apps/IF
           - image: portfolio-golmok
             context: apps/golmok
+          - image: portfolio-golmok-web
+            context: apps/golmok/front
           - image: portfolio-briefly
             context: apps/Briefly
-          - image: portfolio-briefly-web
-            context: apps/Briefly/front
 
     steps:
       - name: Checkout
