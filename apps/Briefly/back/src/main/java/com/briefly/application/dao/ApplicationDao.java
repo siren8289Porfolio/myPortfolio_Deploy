@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class ApplicationDao {
+    private static final String COLUMNS =
+            "id, user_id, fund_id, amount, status, created_at, updated_at";
+
     public Long insert(FundApplication application) throws SQLException {
         String sql = "INSERT INTO fund_applications (user_id, fund_id, amount, status) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBConnectionUtil.getConnection();
@@ -47,12 +50,12 @@ public class ApplicationDao {
     }
 
     public List<FundApplication> findByUserId(Long userId) throws SQLException {
-        String sql = "SELECT * FROM fund_applications WHERE user_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT " + COLUMNS + " FROM fund_applications WHERE user_id = ? ORDER BY created_at DESC";
         return queryList(sql, userId);
     }
 
     public List<FundApplication> findAll() throws SQLException {
-        String sql = "SELECT * FROM fund_applications ORDER BY created_at DESC";
+        String sql = "SELECT " + COLUMNS + " FROM fund_applications ORDER BY created_at DESC";
         List<FundApplication> list = new ArrayList<>();
         try (Connection conn = DBConnectionUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -65,7 +68,7 @@ public class ApplicationDao {
     }
 
     public Optional<FundApplication> findById(Long id) throws SQLException {
-        String sql = "SELECT * FROM fund_applications WHERE id = ?";
+        String sql = "SELECT " + COLUMNS + " FROM fund_applications WHERE id = ?";
         try (Connection conn = DBConnectionUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);

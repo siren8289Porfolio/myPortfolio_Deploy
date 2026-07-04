@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class WatchlistDao {
+    private static final String COLUMNS = "id, user_id, fund_id, created_at";
+
     public Optional<Watchlist> findByUserAndFund(Long userId, Long fundId) throws SQLException {
-        String sql = "SELECT * FROM watchlists WHERE user_id = ? AND fund_id = ?";
+        String sql = "SELECT " + COLUMNS + " FROM watchlists WHERE user_id = ? AND fund_id = ?";
         try (Connection conn = DBConnectionUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, userId);
@@ -28,7 +30,7 @@ public class WatchlistDao {
     }
 
     public List<Watchlist> findByUserId(Long userId) throws SQLException {
-        String sql = "SELECT * FROM watchlists WHERE user_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT " + COLUMNS + " FROM watchlists WHERE user_id = ? ORDER BY created_at DESC";
         List<Watchlist> list = new ArrayList<>();
         try (Connection conn = DBConnectionUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

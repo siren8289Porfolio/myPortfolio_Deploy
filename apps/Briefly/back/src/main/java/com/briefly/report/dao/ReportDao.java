@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReportDao {
+    private static final String COLUMNS = "id, fund_id, title, content, report_date, created_at";
+
     public List<FundReport> findByFundId(Long fundId) throws SQLException {
-        String sql = "SELECT * FROM fund_reports WHERE fund_id = ? ORDER BY report_date DESC";
+        String sql = "SELECT " + COLUMNS + " FROM fund_reports WHERE fund_id = ? ORDER BY report_date DESC";
         List<FundReport> list = new ArrayList<>();
         try (Connection conn = DBConnectionUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

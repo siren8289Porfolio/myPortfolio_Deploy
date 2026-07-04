@@ -12,12 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlertDao {
+    private static final String COLUMNS =
+            "id, fund_id, title, message, previous_grade, new_grade, created_at";
+
     public List<RiskAlert> findByFundIds(List<Long> fundIds) throws SQLException {
         if (fundIds.isEmpty()) {
             return List.of();
         }
         String placeholders = String.join(",", fundIds.stream().map(id -> "?").toList());
-        String sql = "SELECT * FROM risk_alerts WHERE fund_id IN (" + placeholders + ") ORDER BY created_at DESC";
+        String sql = "SELECT " + COLUMNS + " FROM risk_alerts WHERE fund_id IN (" + placeholders
+                + ") ORDER BY created_at DESC";
         List<RiskAlert> list = new ArrayList<>();
         try (Connection conn = DBConnectionUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

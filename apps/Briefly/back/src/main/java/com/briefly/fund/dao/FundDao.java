@@ -14,18 +14,21 @@ import java.util.List;
 import java.util.Optional;
 
 public class FundDao {
+    private static final String COLUMNS =
+            "id, name, description, risk_grade, expected_return, status, created_at, updated_at";
+
     public List<Fund> findActiveAll() throws SQLException {
-        String sql = "SELECT * FROM funds WHERE status = 'ACTIVE' ORDER BY id DESC";
+        String sql = "SELECT " + COLUMNS + " FROM funds WHERE status = 'ACTIVE' ORDER BY id DESC";
         return queryList(sql);
     }
 
     public List<Fund> findAll() throws SQLException {
-        String sql = "SELECT * FROM funds ORDER BY id DESC";
+        String sql = "SELECT " + COLUMNS + " FROM funds ORDER BY id DESC";
         return queryList(sql);
     }
 
     public Optional<Fund> findById(Long id) throws SQLException {
-        String sql = "SELECT * FROM funds WHERE id = ?";
+        String sql = "SELECT " + COLUMNS + " FROM funds WHERE id = ?";
         try (Connection conn = DBConnectionUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);

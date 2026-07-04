@@ -88,6 +88,21 @@ public class DbInitListener implements ServletContextListener {
         """,
     };
 
+    /**
+     * WHERE 절에서 자주 걸러내는 FK성 컬럼들. 인덱스가 없으면 테이블이 커질수록
+     * 매 조회가 Full Scan이 되므로, 자주 쓰는 조회 조건 순서에 맞춰 복합 인덱스를 만든다.
+     */
+    private static final String[] INDEXES = {
+        "CREATE INDEX IF NOT EXISTS idx_funds_status ON funds (status)",
+        // existsPending(userId, fundId, status)과 findByUserId(userId)를 모두 커버하는 복합 인덱스.
+        "CREATE INDEX IF NOT EXISTS idx_fund_applications_user_fund_status "
+                + "ON fund_applications (user_id, fund_id, status)",
+        // findByUserAndFund(userId, fundId)와 findByUserId(userId)를 모두 커버하는 복합 인덱스.
+        "CREATE INDEX IF NOT EXISTS idx_watchlists_user_fund ON watchlists (user_id, fund_id)",
+        "CREATE INDEX IF NOT EXISTS idx_risk_alerts_fund_id ON risk_alerts (fund_id)",
+        "CREATE INDEX IF NOT EXISTS idx_fund_reports_fund_id ON fund_reports (fund_id)",
+    };
+
     private static final String SEED_FUNDS = """
         INSERT INTO funds (name, description, risk_grade, expected_return, status)
         SELECT * FROM (VALUES
@@ -105,6 +120,9 @@ public class DbInitListener implements ServletContextListener {
              Statement stmt = conn.createStatement()) {
             for (String ddl : DDL) {
                 stmt.execute(ddl);
+            }
+            for (String index : INDEXES) {
+                stmt.execute(index);
             }
             stmt.executeUpdate(SEED_FUNDS);
             LOG.info("DbInitListener: 스키마 확인/생성 및 샘플 데이터 시딩 완료");
