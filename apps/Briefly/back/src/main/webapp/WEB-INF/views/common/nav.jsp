@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" %>
 <%@ page import="com.briefly.auth.entity.User" %>
 <%
     User navUser = (User) session.getAttribute("loginUser");
