@@ -41,6 +41,8 @@ export default function StoryDetailClient() {
   const params = useParams();
   const storyId = params.storyId as string;
   const [story, setStory] = useState<Story | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [showReport, setShowReport] = useState(false);
@@ -48,14 +50,20 @@ export default function StoryDetailClient() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!storyId) return;
+    if (!storyId || storyId === "_") return;
+    setLoading(true);
+    setError(false);
     apiFetch<Story>(`/stories/${storyId}`)
       .then((data) => {
         setStory(data);
         setLikeCount(data.likeCount ?? 0);
         setLiked(Boolean(data.liked));
       })
-      .catch(() => setStory(null));
+      .catch(() => {
+        setStory(null);
+        setError(true);
+      })
+      .finally(() => setLoading(false));
   }, [storyId]);
 
   async function handleLike() {
@@ -93,10 +101,21 @@ export default function StoryDetailClient() {
     }
   }
 
-  if (!story) {
+  if (loading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <p className="text-sepia">불러오는 중...</p>
+      </div>
+    );
+  }
+
+  if (error || !story) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+        <p className="text-sepia">스토리를 불러오지 못했습니다.</p>
+        <Link href="/curation" className="btn-secondary text-sm">
+          큐레이션으로 돌아가기
+        </Link>
       </div>
     );
   }

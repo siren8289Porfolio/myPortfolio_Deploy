@@ -12,5 +12,12 @@ services:
     build: ../apps/IF
   golmok-app:
     build: ../apps/golmok
+    environment:
+      SPRING_DATASOURCE_PASSWORD: ${GOLMOK_DB_PASSWORD:-localdev}
+  golmok-db:
+    environment:
+      POSTGRES_PASSWORD: ${GOLMOK_DB_PASSWORD:-localdev}
+  golmok-web:
+    build: ../apps/golmok/front
   briefly-app:
     build: ../apps/Briefly

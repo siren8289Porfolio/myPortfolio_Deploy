@@ -47,7 +47,7 @@ public class Story {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "\"year\"", nullable = false)
     private Integer year;
 
     @Enumerated(EnumType.STRING)
