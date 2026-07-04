@@ -1,30 +1,22 @@
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+FROM node:20-alpine AS build
 
-FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package.json package-lock.json ./
+
+COPY package*.json ./
 RUN npm ci
+
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
-RUN mkdir -p public && npm run build
+ENV NEXT_PUBLIC_BASE_PATH=/pivot
+ENV NEXT_PUBLIC_API_BASE_URL=/pivot
+RUN npm run build
 
-FROM node:20-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
+# react-router 클라이언트 라우팅 SPA이므로 모든 경로가 동일한 셸(index.html)을
+# 받아야 한다. Next의 옵셔널 catch-all export 결과물을 index.html로도 둔다.
+RUN cp "out/[[...slug]].html" out/index.html
 
-RUN addgroup -S pivotseoul && adduser -S pivotseoul -G pivotseoul
+FROM nginx:alpine
 
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=pivotseoul:pivotseoul /app/.next/standalone ./
-COPY --from=builder --chown=pivotseoul:pivotseoul /app/.next/static ./.next/static
+COPY --from=build /app/out /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-USER pivotseoul
-EXPOSE 3000
-
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-CMD ["node", "server.js"]
+EXPOSE 80
