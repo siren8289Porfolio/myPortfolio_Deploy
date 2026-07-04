@@ -31,6 +31,8 @@ jobs:
             context: apps/LegacyPoc
           - image: portfolio-pivot
             context: apps/pivotSeoul
+          - image: portfolio-pivot-web
+            context: apps/pivotSeoul/front
           - image: portfolio-allohub
             context: apps/AlloHub
           - image: portfolio-allohub-web
