@@ -43,9 +43,32 @@ services:
         condition: service_healthy
       pivot-web:
         condition: service_healthy
+      mido-web:
+        condition: service_healthy
     networks:
       - portfolio-network
     restart: unless-stopped
+
+  mido-db:
+    image: postgres:16-alpine
+    container_name: mido-db
+    environment:
+      POSTGRES_DB: ${MIDO_DB_NAME:-mido}
+      POSTGRES_USER: ${MIDO_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${MIDO_DB_PASSWORD}
+    volumes:
+      - mido_pg_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+    healthcheck:
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+      test: ["CMD-SHELL", "pg_isready -U ${MIDO_DB_USER:-postgres} -d ${MIDO_DB_NAME:-mido}"]
 
   mido-app:
     image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-mido:${GHCR_IMAGE_TAG:-latest}
@@ -54,12 +77,39 @@ services:
       - "8080"
     environment:
       SERVER_SERVLET_CONTEXT_PATH: /mido
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-local}
+      SPRING_PROFILES_ACTIVE: ${MIDO_SPRING_PROFILE:-prod}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://mido-db:5432/${MIDO_DB_NAME:-mido}
+      SPRING_DATASOURCE_USERNAME: ${MIDO_DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${MIDO_DB_PASSWORD}
       TZ: ${TZ:-Asia/Seoul}
+    depends_on:
+      mido-db:
+        condition: service_healthy
     networks:
       - portfolio-network
     restart: unless-stopped
     healthcheck: *app-healthcheck
+
+  mido-web:
+    image: ${MIDO_WEB_IMAGE:-ghcr.io/siren8289porfolio/portfolio-mido-web:latest}
+    container_name: mido-web
+    environment:
+      API_CONTEXT_PATH: /mido
+      API_URL: http://mido-app:8080
+    expose:
+      - "3000"
+    depends_on:
+      mido-app:
+        condition: service_healthy
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+    healthcheck:
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/mido || exit 1"]
 
   legacy-app:
     image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-legacy:${GHCR_IMAGE_TAG:-latest}
@@ -177,3 +227,8 @@ networks:
   portfolio-network:
     name: portfolio-network
     driver: bridge
+
+volumes:
+  mido_pg_data:
+    name: portfolio_mido_pg_data
+    external: true
