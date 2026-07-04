@@ -5,7 +5,11 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "audit_logs")
+// findTop100ByOrderByCreatedAtDesc()가 created_at 기준 정렬 후 상위 100건만 잘라내는데,
+// 인덱스가 없으면 로그가 쌓일수록 전체 테이블을 읽어 정렬(Full Scan + Sort)하게 된다.
+@Table(
+        name = "audit_logs",
+        indexes = @Index(name = "idx_audit_logs_created_at", columnList = "created_at DESC"))
 public class AuditLog {
 
     @Id
