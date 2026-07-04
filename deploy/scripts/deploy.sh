@@ -31,7 +31,11 @@ echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME:?GHCR_USERNAME r
 docker compose pull
 
 echo ">>> [4/5] Restart containers"
-docker compose up -d --remove-orphans
+if ! docker compose up -d --remove-orphans; then
+  echo ">>> ERROR: compose up failed — mido-app logs:"
+  docker logs mido-app 2>&1 | tail -40 || true
+  exit 1
+fi
 
 # nginx는 default.conf를 단일 파일로 bind mount한다. git reset --hard가
 # 이 파일을 치환(inode 변경)해도 nginx 컨테이너가 재생성되지 않으면

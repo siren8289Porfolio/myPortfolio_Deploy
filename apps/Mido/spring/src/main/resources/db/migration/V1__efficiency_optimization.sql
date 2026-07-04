@@ -13,6 +13,12 @@ CREATE INDEX IF NOT EXISTS idx_verification_status_created
 CREATE INDEX IF NOT EXISTS idx_verification_input_type_created
     ON verification_data (input_type, created_at DESC);
 
+-- 1:1 제약 전 중복 행 제거(레거시 데이터 호환)
+DELETE FROM work_context a
+    USING work_context b
+WHERE a.verification_data_id = b.verification_data_id
+  AND a.ctid > b.ctid;
+
 CREATE UNIQUE INDEX IF NOT EXISTS uq_work_context_verification
     ON work_context (verification_data_id);
 
