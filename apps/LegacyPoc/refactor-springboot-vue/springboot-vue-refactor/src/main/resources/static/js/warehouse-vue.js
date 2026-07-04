@@ -21,7 +21,7 @@ createApp({
     },
     methods: {
         async loadRows() {
-            const res = await fetch("/api/warehouses");
+            const res = await fetch("/legacy/api/warehouses");
             const json = await res.json();
             this.rows = json.data || [];
         },
@@ -32,7 +32,7 @@ createApp({
             this.showModal = false;
         },
         async createRow() {
-            await fetch("/api/warehouses", {
+            await fetch("/legacy/api/warehouses", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(this.form)
