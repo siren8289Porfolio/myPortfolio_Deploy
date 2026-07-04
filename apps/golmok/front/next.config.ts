@@ -5,6 +5,7 @@ const backendUrl = process.env.BACKEND_URL || "http://localhost:8080";
 const nextConfig: NextConfig = {
   output: "export",
   basePath: "/golmok",
+  trailingSlash: false,
   images: {
     unoptimized: true,
   },

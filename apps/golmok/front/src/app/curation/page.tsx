@@ -24,9 +24,11 @@ function CurationContent() {
   const [sort, setSort] = useState(searchParams.get("sort") || "latest");
   const [tag, setTag] = useState(searchParams.get("tag") || "");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setLoading(true);
+    setError(false);
     const params = new URLSearchParams();
     if (sort) params.set("sort", sort);
     if (tag) params.set("tag", tag);
@@ -34,9 +36,12 @@ function CurationContent() {
     apiFetch<Story[]>(`/stories/curation?${params}`)
       .then((data) => {
         setStories(data);
-        setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setStories([]);
+        setError(true);
+      })
+      .finally(() => setLoading(false));
   }, [sort, tag]);
 
   const allTags = [...PERIOD_TAGS, ...CATEGORIES];
@@ -95,6 +100,10 @@ function CurationContent() {
 
       {loading ? (
         <p className="py-20 text-center text-sepia">불러오는 중...</p>
+      ) : error ? (
+        <p className="py-20 text-center text-sepia">
+          스토리 목록을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
+        </p>
       ) : stories.length === 0 ? (
         <p className="py-20 text-center text-sepia">
           해당 조건의 스토리가 없습니다
