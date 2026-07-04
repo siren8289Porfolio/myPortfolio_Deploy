@@ -10,7 +10,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -47,7 +46,6 @@ public class VerificationData {
     @Column(name = "status", nullable = false)
     private VerificationStatus status = VerificationStatus.DRAFT;
 
-    @Lob
     @Column(name = "code", columnDefinition = "TEXT")
     private String code;
 
