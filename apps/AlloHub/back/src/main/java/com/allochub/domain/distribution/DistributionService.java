@@ -101,7 +101,9 @@ public class DistributionService {
 
     @Transactional(readOnly = true)
     public List<Map<String, Object>> list() {
-        return distributionRepository.findAll().stream().map(this::toListItem).toList();
+        return distributionRepository.findAllWithInvestment().stream()
+                .map(this::toListItem)
+                .toList();
     }
 
     private void validate(DistributionRequest request) {
