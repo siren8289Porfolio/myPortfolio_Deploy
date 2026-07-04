@@ -10,10 +10,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet("/alerts")
 public class AlertServlet extends HttpServlet {
-    private final AlertService alertService = new AlertService();
+    private static final Logger LOGGER = Logger.getLogger(AlertServlet.class.getName());
+
+    private final AlertService alertService;
+
+    public AlertServlet() {
+        this(new AlertService());
+    }
+
+    public AlertServlet(AlertService alertService) {
+        this.alertService = alertService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -22,6 +34,7 @@ public class AlertServlet extends HttpServlet {
             req.setAttribute("alerts", alertService.getAlertsForUser(user.getId()));
             WebUtil.forward(req, resp, "alert/list.jsp");
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "위험 알림 조회 실패", e);
             WebUtil.setError(req, "위험 알림 조회 중 오류가 발생했습니다.");
             WebUtil.forward(req, resp, "error/error.jsp");
         }

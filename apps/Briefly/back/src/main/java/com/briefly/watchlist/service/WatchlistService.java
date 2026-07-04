@@ -7,7 +7,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class WatchlistService {
-    private final WatchlistDao watchlistDao = new WatchlistDao();
+    private final WatchlistDao watchlistDao;
+
+    public WatchlistService() {
+        this(new WatchlistDao());
+    }
+
+    public WatchlistService(WatchlistDao watchlistDao) {
+        this.watchlistDao = watchlistDao;
+    }
 
     public boolean toggle(Long userId, Long fundId) throws SQLException {
         return watchlistDao.findByUserAndFund(userId, fundId)

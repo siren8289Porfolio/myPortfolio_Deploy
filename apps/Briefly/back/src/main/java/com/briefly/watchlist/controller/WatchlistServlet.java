@@ -10,10 +10,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet("/watchlist/toggle")
 public class WatchlistServlet extends HttpServlet {
-    private final WatchlistService watchlistService = new WatchlistService();
+    private static final Logger LOGGER = Logger.getLogger(WatchlistServlet.class.getName());
+
+    private final WatchlistService watchlistService;
+
+    public WatchlistServlet() {
+        this(new WatchlistService());
+    }
+
+    public WatchlistServlet(WatchlistService watchlistService) {
+        this.watchlistService = watchlistService;
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -23,6 +35,7 @@ public class WatchlistServlet extends HttpServlet {
             watchlistService.toggle(user.getId(), fundId);
             WebUtil.redirect(req, resp, "/funds/detail?id=" + fundId);
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "관심상품 처리 실패", e);
             WebUtil.setError(req, "관심상품 처리 중 오류가 발생했습니다.");
             WebUtil.forward(req, resp, "error/error.jsp");
         }

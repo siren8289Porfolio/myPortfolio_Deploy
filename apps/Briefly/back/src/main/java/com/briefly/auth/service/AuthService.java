@@ -8,7 +8,15 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public class AuthService {
-    private final UserDao userDao = new UserDao();
+    private final UserDao userDao;
+
+    public AuthService() {
+        this(new UserDao());
+    }
+
+    public AuthService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     public User login(String email, String password) throws SQLException {
         User user = userDao.findByEmail(email)

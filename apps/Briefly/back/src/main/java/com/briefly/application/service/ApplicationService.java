@@ -9,7 +9,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ApplicationService {
-    private final ApplicationDao applicationDao = new ApplicationDao();
+    private final ApplicationDao applicationDao;
+
+    public ApplicationService() {
+        this(new ApplicationDao());
+    }
+
+    public ApplicationService(ApplicationDao applicationDao) {
+        this.applicationDao = applicationDao;
+    }
 
     public Long apply(Long userId, Long fundId, BigDecimal amount) throws SQLException {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {

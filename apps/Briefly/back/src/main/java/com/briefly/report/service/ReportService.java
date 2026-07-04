@@ -8,7 +8,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ReportService {
-    private final ReportDao reportDao = new ReportDao();
+    private final ReportDao reportDao;
+
+    public ReportService() {
+        this(new ReportDao());
+    }
+
+    public ReportService(ReportDao reportDao) {
+        this.reportDao = reportDao;
+    }
 
     public List<ReportDto> getReportsByFund(Long fundId) throws SQLException {
         return reportDao.findByFundId(fundId).stream().map(ReportDto::from).toList();

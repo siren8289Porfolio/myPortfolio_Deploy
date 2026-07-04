@@ -8,8 +8,10 @@ app:
 spring:
   application:
     name: springboot-api-nextjs
+  # 자격증명을 소스에 고정하지 않고 환경변수로 주입한다. 기본값은 로컬 개발 편의를 위한
+  # 것일 뿐이며, 운영 환경에서는 반드시 DB_USERNAME/DB_PASSWORD 환경변수로 재정의한다.
   datasource:
-    url: jdbc:postgresql://localhost:5432/legacy_next_refactor
-    username: legacy_user
-    password: legacy_pass
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/legacy_next_refactor}
+    username: ${DB_USERNAME:legacy_user}
+    password: ${DB_PASSWORD:legacy_pass}
     driver-class-name: org.postgresql.Driver

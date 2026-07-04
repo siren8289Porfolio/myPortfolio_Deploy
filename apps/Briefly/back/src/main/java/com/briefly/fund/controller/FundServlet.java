@@ -13,11 +13,25 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(urlPatterns = {"/funds", "/funds/detail"})
 public class FundServlet extends HttpServlet {
-    private final FundService fundService = new FundService();
-    private final WatchlistService watchlistService = new WatchlistService();
+    private static final Logger LOGGER = Logger.getLogger(FundServlet.class.getName());
+
+    private final FundService fundService;
+    private final WatchlistService watchlistService;
+
+    public FundServlet() {
+        this(new FundService(), new WatchlistService());
+    }
+
+    // 테스트에서 목(mock) 서비스를 주입할 수 있도록 컨테이너 기본 생성자와 분리한다.
+    public FundServlet(FundService fundService, WatchlistService watchlistService) {
+        this.fundService = fundService;
+        this.watchlistService = watchlistService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -41,6 +55,7 @@ public class FundServlet extends HttpServlet {
             WebUtil.setError(req, e.getMessage());
             WebUtil.forward(req, resp, "error/not-found.jsp");
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "상품 조회 실패: " + req.getRequestURI(), e);
             WebUtil.setError(req, "상품 조회 중 오류가 발생했습니다.");
             WebUtil.forward(req, resp, "error/error.jsp");
         }

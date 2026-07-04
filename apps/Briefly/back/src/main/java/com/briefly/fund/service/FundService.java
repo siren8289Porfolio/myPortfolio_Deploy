@@ -7,7 +7,16 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class FundService {
-    private final FundDao fundDao = new FundDao();
+    private final FundDao fundDao;
+
+    public FundService() {
+        this(new FundDao());
+    }
+
+    // 테스트에서 FundDao를 목(mock)으로 교체해 DB 없이 검증할 수 있도록 생성자로 주입받는다.
+    public FundService(FundDao fundDao) {
+        this.fundDao = fundDao;
+    }
 
     public List<Fund> getActiveFunds() throws SQLException {
         return fundDao.findActiveAll();

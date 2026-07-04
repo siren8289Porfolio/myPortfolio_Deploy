@@ -1,6 +1,7 @@
 package com.example.refactor.feature.warehouse.service;
 
 // 서비스 계층 — 입력 정규화·기본값 처리 후 저장소에 위임한다.
+import com.example.refactor.common.NotFoundException;
 import com.example.refactor.common.PageResult;
 import com.example.refactor.feature.warehouse.dto.CreateWarehouseRequest;
 import com.example.refactor.feature.warehouse.model.WarehouseIo;
@@ -27,7 +28,8 @@ public class WarehouseService {
     }
 
     public WarehouseIo detail(Long id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("입출고 내역을 찾을 수 없습니다. id=" + id));
     }
 
     public WarehouseIo create(CreateWarehouseRequest request) {

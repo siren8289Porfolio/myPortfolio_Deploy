@@ -8,10 +8,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet("/reports")
 public class ReportServlet extends HttpServlet {
-    private final ReportService reportService = new ReportService();
+    private static final Logger LOGGER = Logger.getLogger(ReportServlet.class.getName());
+
+    private final ReportService reportService;
+
+    public ReportServlet() {
+        this(new ReportService());
+    }
+
+    public ReportServlet(ReportService reportService) {
+        this.reportService = reportService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -21,6 +33,7 @@ public class ReportServlet extends HttpServlet {
             req.setAttribute("fundId", fundId);
             WebUtil.forward(req, resp, "report/list.jsp");
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "운용 브리프 조회 실패", e);
             WebUtil.setError(req, "운용 브리프 조회 중 오류가 발생했습니다.");
             WebUtil.forward(req, resp, "error/error.jsp");
         }

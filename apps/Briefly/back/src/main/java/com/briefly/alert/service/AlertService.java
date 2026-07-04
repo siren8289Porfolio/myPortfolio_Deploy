@@ -9,8 +9,17 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AlertService {
-    private final AlertDao alertDao = new AlertDao();
-    private final WatchlistService watchlistService = new WatchlistService();
+    private final AlertDao alertDao;
+    private final WatchlistService watchlistService;
+
+    public AlertService() {
+        this(new AlertDao(), new WatchlistService());
+    }
+
+    public AlertService(AlertDao alertDao, WatchlistService watchlistService) {
+        this.alertDao = alertDao;
+        this.watchlistService = watchlistService;
+    }
 
     public List<AlertDto> getAlertsForUser(Long userId) throws SQLException {
         List<Long> fundIds = watchlistService.getFundIdsByUser(userId);

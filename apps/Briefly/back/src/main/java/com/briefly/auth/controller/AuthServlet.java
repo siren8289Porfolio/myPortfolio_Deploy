@@ -10,10 +10,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(urlPatterns = {"/login", "/signup", "/logout"})
 public class AuthServlet extends HttpServlet {
-    private final AuthService authService = new AuthService();
+    private static final Logger LOGGER = Logger.getLogger(AuthServlet.class.getName());
+
+    private final AuthService authService;
+
+    public AuthServlet() {
+        this(new AuthService());
+    }
+
+    public AuthServlet(AuthService authService) {
+        this.authService = authService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -59,6 +71,7 @@ public class AuthServlet extends HttpServlet {
             WebUtil.setError(req, e.getMessage());
             WebUtil.forward(req, resp, "auth/login.jsp");
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "로그인 처리 실패", e);
             WebUtil.setError(req, "로그인 처리 중 오류가 발생했습니다.");
             WebUtil.forward(req, resp, "auth/login.jsp");
         }
@@ -75,6 +88,7 @@ public class AuthServlet extends HttpServlet {
             WebUtil.setError(req, e.getMessage());
             WebUtil.forward(req, resp, "auth/signup.jsp");
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "회원가입 처리 실패", e);
             WebUtil.setError(req, "회원가입 처리 중 오류가 발생했습니다.");
             WebUtil.forward(req, resp, "auth/signup.jsp");
         }

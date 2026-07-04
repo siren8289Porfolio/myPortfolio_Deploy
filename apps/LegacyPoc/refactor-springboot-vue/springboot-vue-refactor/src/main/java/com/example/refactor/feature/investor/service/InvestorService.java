@@ -1,6 +1,7 @@
 package com.example.refactor.feature.investor.service;
 
 // 서비스 계층 — 입력 정규화·기본값 처리 후 저장소에 위임한다.
+import com.example.refactor.common.NotFoundException;
 import com.example.refactor.common.PageResult;
 import com.example.refactor.feature.investor.dto.CreateInvestorRequest;
 import com.example.refactor.feature.investor.model.Investor;
@@ -27,7 +28,10 @@ public class InvestorService {
     }
 
     public Investor detail(Long id) {
-        return repository.findById(id).orElse(null);
+        // 조회 실패를 null로 흘려보내면 컨트롤러가 200과 함께 빈 본문을 내려줘 버그를 숨긴다.
+        // 예외로 던져 GlobalExceptionHandler가 404로 변환하게 한다.
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("투자자를 찾을 수 없습니다. id=" + id));
     }
 
     public Investor create(CreateInvestorRequest request) {
