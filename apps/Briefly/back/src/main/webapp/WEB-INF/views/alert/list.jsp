@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.briefly.alert.AlertDto" %>
+<%@ page import="com.briefly.alert.dto.AlertDto" %>
 <%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="ko">

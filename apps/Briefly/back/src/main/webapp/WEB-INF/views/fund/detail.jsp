@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.briefly.fund.FundDto" %>
+<%@ page import="com.briefly.fund.dto.FundDto" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
