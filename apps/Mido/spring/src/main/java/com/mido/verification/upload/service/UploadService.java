@@ -1,6 +1,7 @@
 package com.mido.verification.upload.service;
 
 import com.mido.verification.common.entity.VerificationData;
+import com.mido.verification.common.entity.VerificationStatus;
 import com.mido.verification.common.repository.VerificationDataRepository;
 import com.mido.verification.upload.entity.UploadedFile;
 import com.mido.verification.upload.repository.UploadedFileRepository;
@@ -44,6 +45,7 @@ public class UploadService {
         uploadedFileRepository.save(uploadedFile);
 
         data.setCode(uploadedFile.getFileContent());
+        data.setStatus(VerificationStatus.READY);
         data.setUpdatedAt(now);
     }
 }

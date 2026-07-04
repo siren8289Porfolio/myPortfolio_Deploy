@@ -1,6 +1,7 @@
 package com.mido.verification.manual.service;
 
 import com.mido.verification.common.entity.VerificationData;
+import com.mido.verification.common.entity.VerificationStatus;
 import com.mido.verification.common.repository.VerificationDataRepository;
 import com.mido.verification.context.entity.WorkContext;
 import com.mido.verification.context.repository.WorkContextRepository;
@@ -44,6 +45,7 @@ public class ManualInputService {
         data.setCommitHash(request.getCommitHash());
         data.setPrNumber(request.getPrNumber());
         data.setCode(request.getCode());
+        data.setStatus(VerificationStatus.DRAFT);
         data.setCreatedAt(now);
         data.setUpdatedAt(now);
         verificationDataRepository.save(data);
@@ -62,6 +64,7 @@ public class ManualInputService {
         context.setDisplayRepoUrl(data.getRepoUrl());
         context.setDisplayCommitHash(data.getCommitHash());
         context.setDisplayPrNumber(data.getPrNumber());
+        context.setDisplayInputType(data.getInputType());
         context.setCreatedAt(now);
         workContextRepository.save(context);
 

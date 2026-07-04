@@ -24,6 +24,11 @@ public class ApiResponseVoid {
         return new ApiResponseVoid(true, null, "ok");
     }
 
+    public static ApiResponseVoid fail(String code, String message) {
+        ApiResponseVoid response = new ApiResponseVoid(false, null, message);
+        return response;
+    }
+
     public boolean isSuccess() {
         return success;
     }

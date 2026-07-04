@@ -18,6 +18,9 @@ spring:
         format_sql: true
     show-sql: true
 
+  flyway:
+    enabled: false
+
   devtools:
     livereload:
       enabled: true

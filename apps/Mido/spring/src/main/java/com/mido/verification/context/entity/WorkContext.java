@@ -34,6 +34,9 @@ public class WorkContext {
     @Column(name = "display_pr_number")
     private Integer displayPrNumber;
 
+    @Column(name = "display_input_type")
+    private String displayInputType;
+
     @Column(name = "created_at")
     private Instant createdAt;
 
@@ -47,6 +50,8 @@ public class WorkContext {
     public void setDisplayCommitHash(String displayCommitHash) { this.displayCommitHash = displayCommitHash; }
     public Integer getDisplayPrNumber() { return displayPrNumber; }
     public void setDisplayPrNumber(Integer displayPrNumber) { this.displayPrNumber = displayPrNumber; }
+    public String getDisplayInputType() { return displayInputType; }
+    public void setDisplayInputType(String displayInputType) { this.displayInputType = displayInputType; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 }

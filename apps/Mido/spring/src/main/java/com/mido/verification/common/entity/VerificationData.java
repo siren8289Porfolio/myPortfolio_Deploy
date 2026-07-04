@@ -6,7 +6,10 @@ import com.mido.verification.upload.entity.UploadedFile;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -18,7 +21,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "verification_data")
+@Table(name = "verification_data", indexes = {
+        @Index(name = "idx_verification_status_created", columnList = "status, created_at"),
+        @Index(name = "idx_verification_input_type_created", columnList = "input_type, created_at")
+})
 public class VerificationData {
 
     @Id
@@ -36,6 +42,10 @@ public class VerificationData {
 
     @Column(name = "pr_number")
     private Integer prNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private VerificationStatus status = VerificationStatus.DRAFT;
 
     @Lob
     @Column(name = "code")
@@ -66,6 +76,8 @@ public class VerificationData {
     public void setCommitHash(String commitHash) { this.commitHash = commitHash; }
     public Integer getPrNumber() { return prNumber; }
     public void setPrNumber(Integer prNumber) { this.prNumber = prNumber; }
+    public VerificationStatus getStatus() { return status; }
+    public void setStatus(VerificationStatus status) { this.status = status; }
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
     public Instant getCreatedAt() { return createdAt; }

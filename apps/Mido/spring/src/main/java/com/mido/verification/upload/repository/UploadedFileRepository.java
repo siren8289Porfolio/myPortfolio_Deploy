@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface UploadedFileRepository extends JpaRepository<UploadedFile, UUID> {
 
     Optional<UploadedFile> findTopByVerificationDataOrderByUploadedAtDesc(VerificationData verificationData);
+
+    Optional<UploadedFile> findTopByVerificationData_IdOrderByUploadedAtDesc(UUID verificationDataId);
 }

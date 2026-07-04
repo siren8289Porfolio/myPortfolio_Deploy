@@ -1,6 +1,5 @@
 package com.mido.verification.context.service;
 
-import com.mido.verification.common.entity.VerificationData;
 import com.mido.verification.context.dto.WorkContextResponse;
 import com.mido.verification.context.entity.WorkContext;
 import com.mido.verification.context.repository.WorkContextRepository;
@@ -30,14 +29,12 @@ public class WorkContextService {
         WorkContext context = workContextRepository.findByVerificationData_Id(verificationId)
                 .orElseThrow(() -> new IllegalArgumentException("WorkContext not found for verification: " + verificationId));
 
-        VerificationData data = context.getVerificationData();
-
         WorkContextResponse response = WorkContextResponse.from(context);
-        String inputType = data.getInputType();
+        String inputType = context.getDisplayInputType();
         response.setContextType(inputType);
 
         if ("FILE".equals(inputType)) {
-            uploadedFileRepository.findTopByVerificationDataOrderByUploadedAtDesc(data)
+            uploadedFileRepository.findTopByVerificationData_IdOrderByUploadedAtDesc(verificationId)
                     .map(UploadedFile::getFileName)
                     .ifPresent(response::setFileName);
         }

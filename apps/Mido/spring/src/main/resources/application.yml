@@ -9,3 +9,5 @@ server:
 spring:
   application:
     name: backend
+  jpa:
+    open-in-view: false
