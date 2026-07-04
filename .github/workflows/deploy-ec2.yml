@@ -41,6 +41,8 @@ jobs:
             context: apps/AlloHub/front
           - image: portfolio-if
             context: apps/IF
+          - image: portfolio-if-web
+            context: apps/IF/web
           - image: portfolio-golmok
             context: apps/golmok
           - image: portfolio-golmok-web

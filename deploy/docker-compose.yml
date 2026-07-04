@@ -33,6 +33,8 @@ services:
         condition: service_healthy
       if-app:
         condition: service_healthy
+      if-web:
+        condition: service_healthy
       golmok-app:
         condition: service_healthy
       golmok-web:
@@ -175,6 +177,16 @@ services:
       - portfolio-network
     restart: unless-stopped
     healthcheck: *app-healthcheck
+
+  if-web:
+    image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-if-web:${GHCR_IMAGE_TAG:-latest}
+    container_name: if-web
+    expose:
+      - "80"
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+    healthcheck: *web-healthcheck
 
   golmok-app:
     image: ghcr.io/${GHCR_OWNER:-siren8289}/portfolio-golmok:${GHCR_IMAGE_TAG:-latest}
