@@ -1,6 +1,5 @@
-import Link from "next/link";
 import Image from "next/image";
-import { resolveAssetUrl } from "@/lib/api-client";
+import { resolveAssetUrl, storyDetailHref } from "@/lib/api-client";
 
 type StoryCardProps = {
   id: string;
@@ -26,7 +25,7 @@ export function StoryCard({
   likeCount,
 }: StoryCardProps) {
   return (
-    <Link href={`/stories/${id}`} className="group block">
+    <a href={storyDetailHref(id)} className="group block">
       <article className="vintage-card overflow-hidden rounded-xl transition-all duration-300">
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
@@ -62,6 +61,6 @@ export function StoryCard({
           </div>
         </div>
       </article>
-    </Link>
+    </a>
   );
 }

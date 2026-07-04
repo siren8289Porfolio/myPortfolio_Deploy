@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { apiFetch, apiFetchRaw, resolveAssetUrl } from "@/lib/api-client";
+import {
+  apiFetch,
+  apiFetchRaw,
+  resolveAssetUrl,
+  storyIdFromPathname,
+} from "@/lib/api-client";
 
 const StoryMap = dynamic(
   () => import("@/components/StoryMap").then((m) => m.StoryMap),
@@ -38,8 +42,9 @@ type Story = {
 
 export default function StoryDetailClient() {
   const { user } = useAuth();
-  const params = useParams();
-  const storyId = params.storyId as string;
+  // static export placeholder(stories/_.html)에서는 useParams().storyId 가 "_" 라서
+  // 브라우저 URL pathname 에서 실제 id 를 읽는다.
+  const [storyId, setStoryId] = useState<string | null>(null);
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -50,10 +55,16 @@ export default function StoryDetailClient() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!storyId || storyId === "_") return;
+    const id = storyIdFromPathname(window.location.pathname);
+    setStoryId(id);
+    if (!id) {
+      setLoading(false);
+      setError(true);
+      return;
+    }
     setLoading(true);
     setError(false);
-    apiFetch<Story>(`/stories/${storyId}`)
+    apiFetch<Story>(`/stories/${id}`)
       .then((data) => {
         setStory(data);
         setLikeCount(data.likeCount ?? 0);
@@ -64,7 +75,7 @@ export default function StoryDetailClient() {
         setError(true);
       })
       .finally(() => setLoading(false));
-  }, [storyId]);
+  }, []);
 
   async function handleLike() {
     if (!user) return;

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { PERIOD_TAGS, CATEGORIES, SOURCE_TYPES } from "@/lib/constants";
-import { apiFetch, apiUpload, resolveAssetUrl } from "@/lib/api-client";
+import { apiFetch, apiUpload, resolveAssetUrl, storyDetailHref } from "@/lib/api-client";
 
 const StoryMap = dynamic(
   () => import("@/components/StoryMap").then((m) => m.StoryMap),
@@ -74,7 +74,7 @@ export default function NewStoryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      router.push(`/stories/${data.storyId}`);
+      window.location.href = storyDetailHref(data.storyId);
     } catch (err) {
       setError(err instanceof Error ? err.message : "등록에 실패했습니다");
     } finally {

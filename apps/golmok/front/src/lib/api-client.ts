@@ -66,3 +66,19 @@ export function resolveAssetUrl(url: string | null | undefined): string {
   if (BASE_PATH && url.startsWith(BASE_PATH + "/")) return url;
   return `${BASE_PATH}${url}`;
 }
+
+/**
+ * static export는 /stories/_ 셸만 빌드한다. Next <Link> 클라이언트 라우팅은
+ * 미등록 storyId에서 깨지므로 전체 페이지 이동용 절대 경로를 쓴다.
+ */
+export function storyDetailHref(storyId: string): string {
+  return `${BASE_PATH}/stories/${storyId}`;
+}
+
+/** nginx가 stories/_.html 을 서빙해도 URL의 실제 storyId를 읽는다. */
+export function storyIdFromPathname(pathname: string): string | null {
+  const match = pathname.match(/\/stories\/([^/?#]+)/);
+  const id = match?.[1];
+  if (!id || id === "_" || id === "new") return null;
+  return id;
+}

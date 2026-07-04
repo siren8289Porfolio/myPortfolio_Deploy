@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import Link from "next/link";
 import Image from "next/image";
-import { resolveAssetUrl } from "@/lib/api-client";
+import { resolveAssetUrl, storyDetailHref } from "@/lib/api-client";
 import type { MapMarker } from "@/types";
 
 const defaultIcon = L.icon({
@@ -91,12 +90,12 @@ export function StoryMap({
               </div>
               <p className="font-serif font-semibold text-sm">{marker.title}</p>
               <span className="tag-pill mt-1">{marker.category}</span>
-              <Link
-                href={`/stories/${marker.storyId}`}
+              <a
+                href={storyDetailHref(marker.storyId)}
                 className="mt-2 block text-center text-sm text-rust hover:underline"
               >
                 자세히 보기 →
-              </Link>
+              </a>
             </div>
           </Popup>
         </Marker>
