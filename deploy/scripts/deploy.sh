@@ -30,9 +30,18 @@ fi
 echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME:?GHCR_USERNAME required}" --password-stdin
 docker compose pull
 
+echo ">>> [3b/5] Stop existing stack (partial deploys can leave name conflicts)"
+docker compose down --remove-orphans --timeout 30 || true
+# down 이후에도 fixed container_name 이 남으면 recreate 시 Conflict 발생
+while IFS= read -r name; do
+  [[ -n "${name}" ]] && docker rm -f "${name}" 2>/dev/null || true
+done < <(grep -E '^\s+container_name:' docker-compose.yml | awk '{print $2}')
+
 echo ">>> [4/5] Restart containers"
-if ! docker compose up -d --remove-orphans; then
-  echo ">>> ERROR: compose up failed — mido-app logs:"
+if ! docker compose up -d --remove-orphans --force-recreate; then
+  echo ">>> ERROR: compose up failed"
+  docker compose ps -a 2>/dev/null || true
+  echo ">>> mido-app logs (if running):"
   docker logs mido-app 2>&1 | tail -40 || true
   exit 1
 fi
